@@ -7,7 +7,7 @@
 | Задание | Выполнение | Баллы |
 | ------ | ------ | ------ |
 | Задание 1 | * | 60 |
-| Задание 2 | # | 20 |
+| Задание 2 | * | 20 |
 | Задание 3 | # | 20 |
 
 знак "*" - задание выполнено; знак "#" - задание не выполнено;
@@ -32,6 +32,7 @@
 
 Я выбрал игру Minecraft. 
 Вот скриншот её геймплея и краткое описание концепта игры:
+
 ![alt-текст](assets/minecraft_screenshot.jpg "Скриншот геймплея")
 
 Minecraft - игра в жанре песочницы. Игроку дается процедурно генерируемый 3Д мир, состоящий из кубов и дающий игроку возможность перестраивать его как угодно. Конкретной цели в этой игре нет, зато есть свобода.
@@ -44,40 +45,62 @@ Minecraft - игра в жанре песочницы. Игроку дается
 
 ## Задание 2
 Ход работы:
-- Написать программу Hello World на C# с запуском на Unity. 
+- С помощью скрипта на языке Python заполнить google-таблицу данными, описывающими выбранную игровую переменную в выбранной игре. 
+- Средствами google-sheets визуализировать данные в google-таблице для наглядного представления выбранной игровой величины.
 
-[Ссылка на скрин в Unity в репозитории](helloWorldUnity.png)
+В этом коде я смоделировал добычу изумрудов в игре. Каждый игровой день мы можем добыть случайное количество изумрудов от 0 до 64. Эти подсчитанные данные попадут в мою гугл таблицу, где я построю график изменений количества добычи в каждый день.
 
-```C#
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+```python
+import gspread
+import numpy as np
+gc = gspread.service_account(filename='unitydatascience-405215-87da4d6be23c.json')
+sh = gc.open("UnityWorkshop2")
+price = np.random.randint(0, 64, 11)
+mon = list(range(1,11))
+i = 0
+while i <= len(mon):
+    i += 1
+    if i == 0:
+        continue
+    else:
+        if (price[i - 2] == 0):
+            tempInf = "Infinity"
+        else:
+            tempInf = ((price[i-1]-price[i-2])/price[i-2])*100
+        num1 = tempInf
+        num2 = price[i-1]
+        tempInf = str(tempInf)
+        tempInf = tempInf.replace('.',',')
+        sh.sheet1.update(('A' + str(i)), str(i))
+        sh.sheet1.update(('B' + str(i)), str(price[i-1]))
+        sh.sheet1.update(('C' + str(i)), str(tempInf))
+        sh.sheet1.update(('H' + str(i)), num1)#Для анализа в графике (нужен тип float)
+        sh.sheet1.update(('I' + str(i)), float(num2))#Для анализа в графике (нужен тип float)
+        print(tempInf)
 
-public class Destroy : MonoBehaviour
-{
-    public GameObject obj;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyUp(KeyCode.Space)) {
-            Destroy(obj);
-        }
-    }
-}
 ```
+
+Вот сама таблица с графиком изменения добычи изумрудов:
+![alt-текст](assets/google-sheets.png "Гугл таблица")
+https://docs.google.com/spreadsheets/d/10UMu1RjGPR-SGPFLEMx-e_FeBY9rOnS2Ar_pH5Gy4IA/edit#gid=0
 
 
 ## Задание 3
 Ход работы: 
-- Оформить отчет в виде документации на github (markdown-разметка).
+- Настроить на сцене Unity воспроизведение звуковых файлов, описывающих динамику изменения выбранной переменной. 
 
-Готово!
+Я решил в Unity анализировать количество добытых изумрудов в каждый день. Если это количество превышает 42, то воспроизводится PlaySelectAudioGood(), если от 20 до 42, то воспроизводится PlaySelectAudioNormal(), иначе играет PlaySelectAudioBad().
+
+Я запустил сцену, проверил, всё работает!
+
+Скриншот логов в Unity:
+
+![alt-текст](assets/unity.png "скриншот логов в Unity")
+
+Код:
+[Относительная ссылка на документ](assets/UnityBihaviourScrpit.cs)
+
+
 
 ## Выводы
 
